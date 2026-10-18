@@ -3,8 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-BASE = Path(__file__).resolve().parent     # folder this script lives in
-RAW = BASE / "raw"
+BASE = Path(__file__).resolve().parent.parent   # project root (one level above scripts/)
+RAW = BASE / "data" / "raw"
+OUT = BASE / "data" / "processed"
+OUT.mkdir(parents=True, exist_ok=True)
 
 files = {"train": RAW / "datatraining.txt",
          "test1": RAW / "datatest.txt",
