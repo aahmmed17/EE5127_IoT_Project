@@ -9,8 +9,10 @@ from adafruit_ble.characteristics import Characteristic
 
 # ---------- settings ----------
 DATA_FILE = "node_setA.csv"
-PERIOD = 1.0        # seconds per sample: 1.0 for debugging, 60.0 for the real-rate run
-LOOP = False        # True = repeat the file forever (stress tests)
+PERIOD = 60.0        # seconds per sample: 1.0 for debugging, 60.0 for the real-rate run
+LOOP = False       # True = repeat the file forever (stress tests)
+START_DELAY = 20             # seconds after connecting before the first sample is sent
+RESTART_ON_CONNECT = True    # True: every new connection starts again at row 0
 NAME = "OccNode"
 # ------------------------------
 
@@ -51,7 +53,11 @@ while True:
         time.sleep(0.1)
     ble.stop_advertising()
     print("connected")
-    time.sleep(2)                       # give the receiver time to subscribe
+     print("connected: first sample in", START_DELAY, "s")
+    if RESTART_ON_CONNECT:
+        seq = 0
+    time.sleep(START_DELAY)             # time for the receiver to subscribe
+    next_t = time.monotonic()
     next_t = time.monotonic()
     while ble.connected:
         if seq >= len(rows) and not LOOP:
