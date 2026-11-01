@@ -117,3 +117,14 @@ export_set(block, "setA")
 # ---- 3. Longer set for stress tests (set B) ----
 # test1 is only used for validation, so it does not touch your held-out data
 export_set(dfs["test1"], "setB")
+
+feat = ["Temperature", "Humidity", "Light", "CO2", "HumidityRatio", "Occupancy"]
+dfs["train"][feat].to_csv(OUT / "azure_train.csv", index=False)
+dfs["test1"][feat].to_csv(OUT / "azure_val.csv", index=False)
+block[feat].to_csv(OUT / "azure_block.csv", index=False)
+
+t2 = dfs["test2"]
+b0, b1 = block["date"].min(), block["date"].max()
+buf = pd.Timedelta(minutes=30)
+keep = (t2["date"] < b0 - buf) | (t2["date"] > b1 + buf)
+t2[keep][feat].to_csv(OUT / "azure_test.csv", index=False)
